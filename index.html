@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a237e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="เฟื่องฟ้า">
+<link rel="manifest" href="manifest.json">
+<title>เฟื่องฟ้าการ์เม้นท์ KK</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a237e;
+  --navy2:#283593;
+  --navy3:#3949ab;
+  --yellow:#fdd835;
+  --yellow2:#ffee58;
+  --yellow3:#fff9c4;
+  --white:#ffffff;
+  --gray1:#f5f5f5;
+  --gray2:#e0e0e0;
+  --gray3:#9e9e9e;
+  --text:#1a1a2e;
+  --text2:#424242;
+  --text3:#757575;
+  --success:#2e7d32;
+  --danger:#c62828;
+  --warning:#e65100;
+  --r:14px;--rs:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--gray1);color:var(--text);font-family:"Sarabun",sans-serif;font-size:15px}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+/* Header */
+#header{flex-shrink:0;background:var(--navy);padding:0 16px;display:flex;align-items:center;gap:12px;height:60px}
+.header-logo{width:36px;height:36px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Kanit",sans-serif;font-weight:700;font-size:16px;color:var(--navy);flex-shrink:0}
+.header-text{flex:1}
+.header-title{font-family:"Kanit",sans-serif;font-size:16px;font-weight:600;color:var(--white);line-height:1.2}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px}
+.header-notion{background:var(--yellow);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap;text-decoration:none;display:flex;align-items:center;gap:4px;font-family:"Sarabun",sans-serif}
+
+/* Dashboard strip */
+#dash-strip{flex-shrink:0;background:var(--navy2);padding:10px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+#dash-strip::-webkit-scrollbar{display:none}
+.dash-card{flex-shrink:0;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:8px 14px;min-width:100px;cursor:pointer;transition:background .2s}
+.dash-card:active{background:rgba(253,216,53,0.2)}
+.dash-card.loading{opacity:.6}
+.dash-num{font-family:"Kanit",sans-serif;font-size:20px;font-weight:600;color:var(--yellow);line-height:1}
+.dash-lbl{font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px}
+.dash-sub{font-size:9px;color:rgba(255,255,255,.45);margin-top:1px}
+
+/* Agent tabs */
+#agent-bar{flex-shrink:0;background:var(--white);border-bottom:2px solid var(--gray2);display:flex;overflow-x:auto;scrollbar-width:none}
+#agent-bar::-webkit-scrollbar{display:none}
+.a-tab{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 16px;border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;min-width:70px}
+.a-tab.active{border-bottom-color:var(--navy)}
+.a-tab .ico{font-size:18px;line-height:1}
+.a-tab .lbl{font-size:10px;font-weight:500;color:var(--gray3);white-space:nowrap}
+.a-tab.active .lbl{color:var(--navy);font-weight:600}
+
+/* Chat */
+#chat-area{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:var(--gray1)}
+#chat-area::-webkit-scrollbar{width:3px}
+#chat-area::-webkit-scrollbar-thumb{background:var(--gray2);border-radius:4px}
+
+.msg-wrap{display:flex;align-items:flex-end;gap:8px}
+.msg-wrap.user{flex-direction:row-reverse}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-bottom:2px;font-weight:700}
+.avatar.ai{background:var(--navy);color:var(--yellow)}
+.avatar.user{background:var(--yellow);color:var(--navy)}
+.bubble{max-width:80%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.65}
+.bubble.ai{background:var(--white);border:1px solid var(--gray2);border-bottom-left-radius:4px;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.bubble.user{background:var(--navy);border-bottom-right-radius:4px;color:var(--white)}
+.bubble b{color:var(--navy);font-weight:600}
+.bubble.user b{color:var(--yellow)}
+.bubble ul{padding-left:16px;margin-top:4px}
+.bubble li{margin-bottom:3px}
+.bubble .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin:2px 2px 2px 0;font-weight:500}
+.tag-danger{background:#ffebee;color:var(--danger)}
+.tag-success{background:#e8f5e9;color:var(--success)}
+.tag-warn{background:#fff3e0;color:var(--warning)}
+.tag-info{background:#e3f2fd;color:#1565c0}
+.ts{font-size:10px;color:var(--gray3);margin-top:4px}
+.dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--navy3);margin:0 2px;animation:bounce .9s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+/* Order cards */
+.order-card{background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:12px 14px;margin-top:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.oc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.oc-name{font-weight:600;font-size:14px;color:var(--navy)}
+.oc-status{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.oc-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-top:3px}
+.oc-amount{font-family:"Kanit",sans-serif;font-size:15px;font-weight:600;color:var(--danger)}
+.oc-date{font-size:11px;color:var(--gray3)}
+
+/* Quick chips */
+#quick-row{flex-shrink:0;display:flex;gap:7px;padding:8px 16px;overflow-x:auto;scrollbar-width:none;background:var(--white);border-top:1px solid var(--gray2)}
+#quick-row::-webkit-scrollbar{display:none}
+.q-chip{flex-shrink:0;padding:7px 13px;border-radius:20px;background:var(--yellow3);border:1.5px solid var(--yellow);font-size:12px;color:var(--navy);font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:"Sarabun",sans-serif}
+.q-chip:active{background:var(--yellow);color:var(--navy)}
+
+/* Input */
+#input-bar{flex-shrink:0;padding:10px 14px 20px;background:var(--white);border-top:1px solid var(--gray2);display:flex;gap:10px;align-items:flex-end}
+#user-input{flex:1;background:var(--gray1);border:1.5px solid var(--gray2);border-radius:var(--r);padding:10px 14px;color:var(--text);font-family:"Sarabun",sans-serif;font-size:14px;outline:none;resize:none;max-height:100px;line-height:1.5;transition:border .2s}
+#user-input:focus{border-color:var(--navy)}
+#user-input::placeholder{color:var(--gray3)}
+#send-btn{width:44px;height:44px;border-radius:50%;background:var(--navy);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .1s;font-size:18px}
+#send-btn:active{transform:scale(.92)}
+#send-btn:disabled{opacity:.4}
+
+/* Notion sync badge */
+.sync-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;background:#e8f5e9;color:var(--success);border-radius:10px;padding:2px 8px;margin-bottom:6px;font-weight:500}
+.sync-dot{width:5px;height:5px;border-radius:50%;background:var(--success)}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="header">
+    <div class="header-logo">ฟ</div>
+    <div class="header-text">
+      <div class="header-title">เฟื่องฟ้าการ์เม้นท์</div>
+      <div class="header-sub">Khon Kaen · AI Assistant</div>
+    </div>
+    <a href="https://www.notion.so/FF-Garment-KK-27493d9881e1806b815ae2aee31c09e0" target="_blank" class="header-notion">📋 Notion</a>
+  </div>
+
+  <div id="dash-strip">
+    <div class="dash-card" id="dc-inprogress" onclick="dashTap('inprogress')">
+      <div class="dash-num" id="dn-inprogress">...</div>
+      <div class="dash-lbl">กำลังทำ</div>
+      <div class="dash-sub">ออเดอร์</div>
+    </div>
+    <div class="dash-card" id="dc-debt" onclick="dashTap('debt')">
+      <div class="dash-num" id="dn-debt">...</div>
+      <div class="dash-lbl">ค้างชำระ</div>
+      <div class="dash-sub">บาท</div>
+    </div>
+    <div class="dash-card" id="dc-due" onclick="dashTap('due')">
+      <div class="dash-num" id="dn-due">...</div>
+      <div class="dash-lbl">ใกล้ส่ง</div>
+      <div class="dash-sub">7 วัน</div>
+    </div>
+    <div class="dash-card" id="dc-done" onclick="dashTap('done')">
+      <div class="dash-num" id="dn-done">...</div>
+      <div class="dash-lbl">เสร็จแล้ว</div>
+      <div class="dash-sub">ออเดอร์</div>
+    </div>
+  </div>
+
+  <div id="agent-bar">
+    <div class="a-tab active" data-agent="order" onclick="selectAgent(this)"><span class="ico">📋</span><span class="lbl">ออเดอร์</span></div>
+    <div class="a-tab" data-agent="report" onclick="selectAgent(this)"><span class="ico">📊</span><span class="lbl">รายงาน</span></div>
+    <div class="a-tab" data-agent="insight" onclick="selectAgent(this)"><span class="ico">💡</span><span class="lbl">วิเคราะห์</span></div>
+    <div class="a-tab" data-agent="quote" onclick="selectAgent(this)"><span class="ico">💰</span><span class="lbl">เสนอราคา</span></div>
+    <div class="a-tab" data-agent="reply" onclick="selectAgent(this)"><span class="ico">💬</span><span class="lbl">ตอบลูกค้า</span></div>
+  </div>
+
+  <div id="chat-area"></div>
+
+  <div id="quick-row"></div>
+
+  <div id="input-bar">
+    <textarea id="user-input" rows="1" placeholder="พิมพ์คำถาม..."></textarea>
+    <button id="send-btn" onclick="sendMsg()">➤</button>
+  </div>
+
+</div>
+<script>
+const DB_SILK = "35493d9881e180fdb028f396d09fdf77";
+const DB_PROJECT = "27493d9881e1808cba49d1b8848afe34";
+
+async function notionQuery(dbId, filter) {
+  try {
+    const r = await fetch("/.netlify/functions/notion", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        endpoint: `databases/${dbId}/query`,
+        body: filter ? {filter} : {}
+      })
+    });
+    const text = await r.text();
+    try { return JSON.parse(text); } catch(e) { console.error("parse err", text); return null; }
+  } catch(e) {
+    console.error("fetch err", e);
+    return null;
+  }
+}
+
+function getProp(page, key, type) {
+  const p = page.properties?.[key];
+  if(!p) return null;
+  if(type==="title") return p.title?.[0]?.plain_text || "";
+  if(type==="text") return p.rich_text?.[0]?.plain_text || "";
+  if(type==="number") return p.number ?? 0;
+  if(type==="select") return p.select?.name || "";
+  if(type==="status") return p.status?.name || "";
+  if(type==="checkbox") return p.checkbox || false;
+  if(type==="date") return p.date?.start || "";
+  if(type==="phone") return p.phone_number || "";
+  return null;
+}
+
+async function loadDashboard() {
+  const [silk, proj] = await Promise.all([
+    notionQuery(DB_SILK),
+    notionQuery(DB_PROJECT)
+  ]);
+
+  let inProgress=0, done=0, totalDebt=0, dueSoon=0;
+  const today = new Date();
+  const week = new Date(today); week.setDate(week.getDate()+7);
+
+  if(silk?.results) {
+    silk.results.forEach(p => {
+      const st = getProp(p,"สถานะ","status");
+      const debt = getProp(p,"ค้างชำระ","number") || 0;
+      const due = getProp(p,"กำหนดเสร็จ","date");
+      const paid = getProp(p,"ชำระแล้ว","checkbox");
+      if(st==="กำลังดำเนินการ"||st==="ยังไม่ได้เริ่ม") inProgress++;
+      if(st==="เสร็จ") done++;
+      if(debt>0 && !paid) totalDebt+=debt;
+      if(due){const d=new Date(due);if(d>=today&&d<=week)dueSoon++;}
+    });
+  }
+  if(proj?.results) {
+    proj.results.forEach(p => {
+      const st = getProp(p,"Status","status");
+      const debt = getProp(p,"ค้างชำระ","number") || 0;
+      const due = getProp(p,"กำหนดเสร็จ","date");
+      const paid = getProp(p,"จ่าย % แล้ว","checkbox");
+      if(st==="In progress"||st==="Not started") inProgress++;
+      if(st==="Done") done++;
+      if(debt>0 && !paid) totalDebt+=debt;
+      if(due){const d=new Date(due);if(d>=today&&d<=week)dueSoon++;}
+    });
+  }
+
+  document.getElementById("dn-inprogress").textContent = silk||proj ? inProgress : "!";
+  document.getElementById("dn-debt").textContent = silk||proj ? (totalDebt>0?totalDebt.toLocaleString():"0") : "!";
+  document.getElementById("dn-due").textContent = silk||proj ? dueSoon : "!";
+  document.getElementById("dn-done").textContent = silk||proj ? done : "!";
+
+  if(!silk && !proj) {
+    addMsg("ai","⚠️ ดึงข้อมูลจาก Notion ไม่สำเร็จ\n\nกรุณาตรวจสอบ:\n• NOTION_TOKEN ใน Netlify Environment Variables\n• Integration ถูก Connect กับ Database แล้วหรือยัง");
+  } else {
+    addMsg("ai","✅ เชื่อมต่อ Notion สำเร็จแล้วครับ");
+  }
+}
+
+function dashTap(type) {
+  const map = {
+    inprogress:"ออเดอร์ที่กำลังดำเนินการทั้งหมดมีอะไรบ้าง?",
+    debt:"ใครค้างชำระอยู่บ้าง และยอดรวมเท่าไหร่?",
+    due:"งานไหนต้องส่งภายใน 7 วันนี้?",
+    done:"งานที่เสร็จแล้วล่าสุดมีอะไรบ้าง?"
+  };
+  document.getElementById("user-input").value = map[type]||"";
+  sendMsg();
+}
+
+const AGENTS = {
+  order:{
+    name:"Order AI",ico:"📋",
+    greeting:"สวัสดีครับ 👋 ผม <b>Order AI</b>\nดึงข้อมูลออเดอร์จาก Notion แล้วครับ\nจะให้ดูอะไรก่อน?",
+    chips:["ออเดอร์ค้างอยู่มีกี่รายการ?","ใครค้างชำระบ้าง?","งานใกล้ถึงกำหนดส่ง","สรุปออเดอร์วันนี้"],
+    sys:`คุณคือ Order AI ของร้านเฟื่องฟ้าการ์เม้นท์ ขอนแก่น
+Database 1 "รับงานปัก/สกรีน": ชื่อลูกค้า, ประเภทงาน(เสื้อโปโล/เสื้อยืด/งานปัก/แจ็คเก็ต/ปักชิ้นผ้า/เสื้อยืดสกรีน), สถานะ(ยังไม่ได้เริ่ม/กำลังดำเนินการ/เสร็จ), ชำระแล้ว, ค้างชำระ(บาท), กำหนดเสร็จ
+Database 2 "Project": ข้อมูลลูกค้า, เทคนิค(แจ็คเก็ต/ตัดแต่ง/ปัก/สกรีน/โปโล), Status(Not started/In progress/Done), ค้างชำระ, กำหนดเสร็จ
+ออเดอร์ที่รู้: งานบุญบั้งไฟ(บัวตอง,ค้างชำระ3825บ,เลยกำหนด), อีลุย(ปักชิ้นผ้า,กำหนด31พ.ค.), Wash United(Fah Tist,ค้างชำระ1240บ,เสร็จ), ปากทาง(ค้างชำระ650บ,เสร็จ), SMTE ภูเขียว, สาธิต มข, ฉุกเฉิน ราชพฤกษ์, กรมทาง หนองเรือ, MEP รัตนบุรี, ENTERTAIN วิศวะ, SEM บัวขาว, โปโล SMT ภูเขียว
+ตอบภาษาไทย กระชับ มี bullet points`
+  },
+  report:{
+    name:"Report AI",ico:"📊",
+    greeting:"สวัสดีครับ ผม <b>Report AI</b> 📊\nช่วยสรุปยอดและวิเคราะห์ข้อมูลได้ครับ",
+    chips:["สรุปงานเดือนนี้","ยอดค้างชำระรวม","ประเภทงานไหนมีมากสุด?","วิเคราะห์แนวโน้ม"],
+    sys:`คุณคือ Report AI ของร้านเฟื่องฟ้าการ์เม้นท์ ขอนแก่น
+ออเดอร์ที่รู้: งานบุญบั้งไฟ(7650บ กำไร1635บ), Wash United(โปโล1240บ), ปากทาง(650บ), Smart vet(2720บ), MEP รัตนบุรี(Done), เทควันโด วิศวะ, โปโล SBN9, ช้อป นครพนม, กรมทาง หนองเรือ, ENTERTAIN วิศวะ, SEM บัวขาว, โปโล SMT ภูเขียว, สาธิต มข, SMTE ภูเขียว, ฉุกเฉิน ราชพฤกษ์
+ตอบภาษาไทย มีตัวเลข insight และ bullet points`
+  },
+  insight:{
+    name:"Insight AI",ico:"💡",
+    greeting:"สวัสดีครับ ผม <b>Insight AI</b> 💡\nวิเคราะห์ pattern หาโอกาสธุรกิจได้เลยครับ",
+    chips:["ลูกค้าไหนควรติดตามกลับ?","งานประเภทไหนกำไรดีสุด?","แนะนำการปรับราคา","โอกาสธุรกิจที่น่าลอง"],
+    sys:`คุณคือ Insight AI ของร้านเฟื่องฟ้าการ์เม้นท์ ขอนแก่น รับทำเสื้อรุ่น เสื้อทีม เสื้อกิจกรรม ลูกค้าหลักคือกลุ่มองค์กร/โรงเรียน/มหาวิทยาลัย/หน่วยงาน
+ประวัติ: Smart vet(HD Prim,2025), MEP รัตนบุรี, Wash United(FB), สาธิต มข, วิศวะ มช, เทควันโด วิศวะ, ENTERTAIN วิศวะ, Gifted บัวขาว/โพนทอง, โรงเรียนมหาไถ่, SMTE ภูเขียว, SMT ภูเขียว, SEM บัวขาว, ฉุกเฉิน ราชพฤกษ์, ช้อป นครพนม, กรมทาง หนองเรือ
+วิเคราะห์ actionable insight ตอบภาษาไทย กระชับ`
+  },
+  quote:{
+    name:"Quote AI",ico:"💰",
+    greeting:"สวัสดีครับ ผม <b>Quote AI</b> 💰\nประเมินราคาและร่าง Quote ได้เลยครับ",
+    chips:["ปักโลโก้ 50 ตัว","สกรีน 2 สี 100 ตัว","แจ็คเกตตัดแต่ง 30 ตัว","พิมพ์ DTF หน้า-หลัง"],
+    sys:`คุณคือ Quote AI ของร้านเฟื่องฟ้าการ์เม้นท์ ขอนแก่น โทร 081-047-2320
+ตารางราคา:
+งานปัก: เล็ก(4x4) 65/55/45/38/30บ, กลาง(8x8) 100/85/70/58/45บ, ใหญ่(12x12) 160/130/110/90/70บ (ตาม 1-11/12-29/30-49/50-99/100+ ชิ้น)
+สกรีน: 1สี 80/60/45/35/25บ, 2สี 100/75/58/45/35บ, 3สี 130/95/75/58/45บ
+DTF: A6=55/45/38/30/22บ, A5=80/65/55/45/35บ, A4=120/95/80/65/50บ
+ค่าออกแบบ: มีแบบ 200-500บ, ใหม่ 500-1500บ | มัดจำ 50% | ส่งฟรีทั่วประเทศ
+ประเมินราคาพร้อมรายละเอียดชัดเจน ตอบภาษาไทย`
+  },
+  reply:{
+    name:"Reply AI",ico:"💬",
+    greeting:"สวัสดีครับ ผม <b>Reply AI</b> 💬\nวางข้อความลูกค้ามาได้เลย จะร่างให้ทันทีครับ",
+    chips:["ร่างข้อความรับ Brief","ส่งใบเสนอราคา","แจ้งสถานะงาน","แจ้งล่าช้า"],
+    sys:`คุณคือ Reply AI ของร้านเฟื่องฟ้าการ์เม้นท์ ขอนแก่น โทร 081-047-2320
+ช่วยร่างข้อความตอบลูกค้าทาง Line/Facebook ให้สุภาพ เป็นมืออาชีพ กระชับ
+รูปแบบ: สวัสดี+ชื่อ, ใช้ครับ/ค่ะ, emoji พอดี, ลงท้าย 🙏
+เงื่อนไข: แก้แบบ 2 รอบฟรี/รอบ3+=200บ, มัดจำ50%, ผลิต7-14วัน, ส่งฟรีทั่วประเทศ
+ร่างพร้อมใช้ คัดลอกได้เลย`
+  }
+};
+
+let cur="order", loading=false;
+const chatEl=document.getElementById("chat-area");
+
+function nl2br(s){
+  return s.replace(/\*\*(.*?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>");
+}
+function now(){return new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"})}
+
+function addMsg(role,html,isLoad=false){
+  const wrap=document.createElement("div");
+  wrap.className=`msg-wrap ${role}`;
+  const av=document.createElement("div");
+  av.className=`avatar ${role}`;
+  av.textContent=role==="ai"?AGENTS[cur].ico[0]:"ฉ";
+  const bub=document.createElement("div");
+  bub.className=`bubble ${role}${isLoad?" loading":""}`;
+  if(isLoad){bub.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';}
+  else{bub.innerHTML=nl2br(html)+`<div class="ts">${now()}</div>`;}
+  if(role==="user"){wrap.appendChild(bub);wrap.appendChild(av);}
+  else{wrap.appendChild(av);wrap.appendChild(bub);}
+  chatEl.appendChild(wrap);
+  chatEl.scrollTop=chatEl.scrollHeight;
+  return bub;
+}
+
+function setChips(a){
+  document.getElementById("quick-row").innerHTML=AGENTS[a].chips.map(c=>
+    `<div class="q-chip" onclick="sendQuick(this)">${c}</div>`).join("");
+}
+
+function selectAgent(el){
+  document.querySelectorAll(".a-tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  cur=el.dataset.agent;
+  chatEl.innerHTML="";
+  setChips(cur);
+  addMsg("ai",AGENTS[cur].greeting);
+  document.getElementById("user-input").placeholder=`ถาม ${AGENTS[cur].name}...`;
+}
+
+function sendQuick(el){
+  document.getElementById("user-input").value=el.textContent.trim();
+  sendMsg();
+}
+
+async function sendMsg(){
+  if(loading)return;
+  const inp=document.getElementById("user-input");
+  const q=inp.value.trim();if(!q)return;
+  inp.value="";inp.style.height="auto";
+  loading=true;document.getElementById("send-btn").disabled=true;
+  addMsg("user",q);
+  const loader=addMsg("ai","",true);
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1000,
+        system:AGENTS[cur].sys,
+        messages:[{role:"user",content:q}]
+      })
+    });
+    const d=await r.json();
+    const t=d.content?.find(b=>b.type==="text")?.text||"ขออภัยครับ เกิดข้อผิดพลาด";
+    loader.className="bubble ai";
+    loader.innerHTML=nl2br(t)+`<div class="ts">${now()}</div>`;
+  }catch(e){
+    loader.className="bubble ai";
+    loader.innerHTML="⚠️ ไม่สามารถเชื่อมต่อได้ในขณะนี้";
+  }
+  loading=false;
+  document.getElementById("send-btn").disabled=false;
+  chatEl.scrollTop=chatEl.scrollHeight;
+}
+
+const inp=document.getElementById("user-input");
+inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=Math.min(inp.scrollHeight,100)+"px";});
+inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();}});
+
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+setChips("order");
+addMsg("ai",AGENTS.order.greeting);
+loadDashboard();
+</script>
+</body>
+</html>
