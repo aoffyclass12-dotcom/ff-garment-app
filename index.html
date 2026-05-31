@@ -368,25 +368,17 @@ async function sendMsg(){
   inp.value="";inp.style.height="auto";
   loading=true;document.getElementById("send-btn").disabled=true;
   addMsg("user",q);
-  const loader=addMsg("ai","",true);
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:1000,
-        system:AGENTS[cur].sys,
-        messages:[{role:"user",content:q}]
-      })
-    });
-    const d=await r.json();
-    const t=d.content?.find(b=>b.type==="text")?.text||"ขออภัยครับ เกิดข้อผิดพลาด";
-    loader.className="bubble ai";
-    loader.innerHTML=nl2br(t)+`<div class="ts">${now()}</div>`;
-  }catch(e){
-    loader.className="bubble ai";
-    loader.innerHTML="⚠️ ไม่สามารถเชื่อมต่อได้ในขณะนี้";
+  addMsg("ai","⏳ กำลังส่งไปยัง Claude... กรุณาดูคำตอบในหน้าต่าง Claude ครับ");
+  // Send to Claude chat via sendPrompt
+  const prompt = `[${AGENTS[cur].name} — เฟื่องฟ้าการ์เม้นท์]\n${AGENTS[cur].sys}\n\nคำถาม: ${q}`;
+  if(window.sendPrompt) {
+    window.sendPrompt(prompt);
+  } else if(window.parent && window.parent.sendPrompt) {
+    window.parent.sendPrompt(prompt);
+  } else {
+    // Fallback: open Claude with the question
+    const encoded = encodeURIComponent(prompt);
+    window.open(`https://claude.ai/new?q=${encoded}`, '_blank');
   }
   loading=false;
   document.getElementById("send-btn").disabled=false;
